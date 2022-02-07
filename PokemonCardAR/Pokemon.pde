@@ -12,7 +12,7 @@ class Pokemon
       nft = new MultiNft(parent, widthCapture, heightCapture,
       "camera_para.dat",
       NyAR4PsgConfig.CONFIG_PSG);
-      nft.addNftTarget(name + "/Marquer_" + name,80);
+      nft.addNftTarget(name + "/Marker_" + name,80);
     }
     
     private void load()

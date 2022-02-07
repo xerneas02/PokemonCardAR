@@ -66,7 +66,7 @@ void setup() {
     println("Which webcam do you want ?");
     for(int j = 0; j < cameras.length; j++)
     {
-      println(j + " : " + cameras[i]);
+      println(j + " : " + cameras[j]);
     }
   }
 }
@@ -134,7 +134,7 @@ int keyAnalyzer(char c)
 
 void keyPressed(){
   lastKey = key;
-  if(!cameraSelected) print(lastKey);
+  if(!cameraSelected) print(lastKey + "\n");
   switch(key){
     case 'r' : doRoatate = !doRoatate; break;
   }
