@@ -8,29 +8,25 @@
 
 **Pokémon Card AR** is an augmented reality sketch built with **Processing** and **ARToolKit**. When you point your webcam at a Pokémon marker (image target), a 3D model of that Pokémon pops up, complete with particle effects, animations, and configurable flame overlays!
 
-The project is structured to make it easy to explore, customize, and—most importantly—**add your own Pokémon** to the experience.
+![image](https://github.com/user-attachments/assets/78d4f2dd-b587-41be-b6e0-81f3aa16e529)
+
+![image](https://github.com/user-attachments/assets/c6eafd15-21be-4dd6-96a1-b7ea05e65ca4)
+
+
+The code is organized so you can see each piece’s responsibility and easily **add new Pokémon** to your own AR experience.
 
 ---
 
 ## ⚙️ How It Works
 
-1. **Marker Tracking**
+1. **`PokemonCardAR.pde`**: Initializes the ARToolKit engine, loads camera parameters, scans the `data/` folder for markers, and delegates detection events to submodules.
+2. **Marker Tracking** (`Card.pde`): Uses ARToolKit to detect printed marker images and calculate their pose in 3D space.
+3. **Model Loading** (`Card.pde`): When a marker is found, the sketch loads the corresponding 3D model (`.obj`, `.fbx`, or `.dae`), material (`.mtl`), and textures (`*.png`) from `data/<Pokemon>/`.
+4. **Rendering & Effects**
 
-   * Uses ARToolKit to detect specific printed markers via your webcam.
-2. **Model Loading**
+   * **`Flame.pde`**: Renders configurable flame overlays around the model, based on a `flame.config` file in each Pokémon folder.
+   * **`Particle.pde`**: Generates ambient particles rising around the model for extra visual flair.
 
-   * For each recognized marker, the corresponding folder in `data/` (e.g., `data/Charmander/`) contains:
-
-     * **3D model files** (`.obj`, `.fbx`, `.dae`)
-     * **Material definitions** (`.mtl`)
-     * **Texture images** (`*.png`)
-     * **Marker definition files** (`.iset`, `.fset`, `.fset3`)
-     * **Optional flame configuration file** (`flame.config`)
-3. **Rendering & Effects**
-
-   * `Card.pde` handles the high‐level AR loop and draws the 3D model.
-   * `Flame.pde` adds a configurable flame or ice overlay effect around the model.
-   * `Particle.pde` generates rising particle effects (embers, snowflakes, etc.).
 
 ---
 
@@ -39,15 +35,15 @@ The project is structured to make it easy to explore, customize, and—most impo
 ```
 PokemonCardAR/
 ├── data/
-│   ├── Charizard/      # Example: all files for Charizard marker
-│   ├── Pikachu/        # Example: all files for Pikachu marker
+│   ├── Charizard/      # 3D model (.obj/.fbx/.dae), material (.mtl), textures (.png), and marker files (.iset/.fset/.fset3)
+│   ├── Pikachu/        # Same structure for Pikachu
 │   ├── ...             # Other Pokémon folders
-│   └── camera_para.dat # ARToolKit camera calibration data
-├── Card.pde            # Main AR sketch: tracking + model render
-├── Flame.pde           # Overlay effect (flames)
+│   └── camera_para.dat # ARToolKit camera calibration file
+├── PokemonCardAR.pde   # Main sketch: AR initialization & event loop
+├── Card.pde            # Marker detection & 3D model placement logic
+├── Flame.pde           # Flame overlay effect rendering
 ├── Particle.pde        # Particle system
-├── README.md           # This document
-└── LICENSE             # MIT License
+└── README.md           # This document
 ```
 
 ---
@@ -57,55 +53,49 @@ PokemonCardAR/
 1. **Install Processing** (version 3.5+)
 
    * Download from [processing.org](https://processing.org).
-2. **Download/Clone this repo** into your Processing sketches folder.
-3. **Install ARToolKit for Processing**:
-
-   * Copy the `artoolkit` library folder into your Processing `libraries/` directory.
-4. **Print your markers**:
-
-   * Use the `.png` files inside each `data/[Pokémon]/Marker_*.png` as printed targets.
-5. **Calibrate your camera**:
-
-   * Ensure `camera_para.dat` is present in the `data/` folder.
+2. **Clone or download** this repo into your Processing sketchbook folder.
+3. **Add ARToolKit library**: Copy the `artoolkit` folder into `~/Documents/Processing/libraries/`.
+4. **Print your markers**: Use each `Marker_<Name>.png` in `data/<Pokemon>/` as your physical AR cards.
+5. **Verify camera calibration**: Ensure `camera_para.dat` is in `data/`.
 
 ---
 
 ## ▶️ Usage
 
-1. Open **Card.pde** in Processing.
-2. Click **Run** (▶️) to start the webcam and AR engine.
-3. Point your camera at a printed Pokémon marker.
-4. Enjoy the 3D model + effects!
+1. Open **PokemonCardAR.pde** in Processing.
+2. Click **Run** (▶️) to launch the sketch with webcam access.
+3. Point your camera at any Pokémon card registered.
+4. Watch that Pokémon appear in 3D.
 
 ---
 
 ## 🆕 Adding Your Own Pokémon
 
-1. **Create a new folder** in `data/` named after your Pokémon (e.g., `Bulbasaur/`).
-2. **Create or obtain**:
+1. **Create a folder** in `data/` named exactly after your Pokémon (e.g., `Bulbasaur/`).
+2. **Place these files** inside that folder:
 
-   * A **3D model** (`.obj`, `.fbx`, or `.dae`).
-   * Corresponding **material** (`.mtl`) and **textures** (`.png`).
-3. **Create marker definitions**:
+   * **3D model**: `.obj`, `.fbx`, or `.dae`
+   * **Material**: `.mtl`
+   * **Textures**: all required `.png` images
+   * **Marker definitions**: `.iset`, `.fset`, and `.fset3` generated via ARToolKit’s `mk_patt` tool
+   * **Flame config** (optional): `flame.config` to tweak color, size, and speed of overlays
+3. **Ensure** `camera_para.dat` is accessible (either at root `data/` or copied into your folder).
+4. **Run the sketch**. The main script auto-scans `data/` by folder name—no extra code edits required!
 
-   * Use ARToolKit’s `mk_patt` tool to convert your marker image into `*.iset`, `*.fset`, `*.fset3` files.
-   * Name them `Marker_<YourName>.iset`, etc.
-4. **Copy** `camera_para.dat` into your new folder or keep it at `data/` root.
-5. **Reference your folder**:
-
-   * In `Card.pde`, add your Pokémon’s folder name to the list of tracked markers.
-
-For a step-by-step walkthrough, watch this tutorial video (excuse my bad accent I am French):
+For a guided tutorial on adding new Pokémon, watch:
 [https://youtu.be/DKDLUqVoHVw?si=U8twDkF\_-YK2Wsjw](https://youtu.be/DKDLUqVoHVw?si=U8twDkF_-YK2Wsjw)
+*Excuse my French accent!*
 
 ---
 
 ## 🎨 Customization
 
-* Add particle effect : Tweak colors, positions with `flame.config` in your pokemon folder (exemple can be found in Charmender and Charmeleon folder).
+* **Flame Effects**: Edit `data/<Pokemon>/flame.config` to change overlay color, opacity, and animation speed.
+* **Particle Behavior**: Adjust spawn rate, velocity, size, and lifetime parameters in `Particle.pde`.
+* **Model Transform**: In `Card.pde`, tweak the positioning and scaling matrices to fit each model perfectly.
 
 ---
 
 ## 📜 License
 
-This project is released under the **MIT License**. See [LICENSE](LICENSE) for details.
+This project is released under the **MIT License**.
